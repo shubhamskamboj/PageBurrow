@@ -1,0 +1,25 @@
+PAGEBURROW ON IPHONE AND IPAD
+=============================
+
+iOS does not let apps run the PDF engine this tool needs, so an iPhone or iPad uses
+PageBurrow running on another device on the same Wi-Fi: a Windows PC, a Mac,
+a Linux computer or an Android phone with Termux.
+
+1. On that device, start the "phone access" launcher:
+     Windows:  Start-Windows-Phone-Access.cmd
+     macOS:    Start-macOS-Phone-Access.command
+     Linux:    start-linux-phone-access.sh
+     Android:  sh start-android-termux.sh --lan     (in Termux)
+   Its window shows an address such as http://192.168.1.23:8765 and a 6-digit PIN.
+   On Windows, allow Python on private networks if Windows asks.
+
+2. On the iPhone or iPad, open Safari and type that address.
+
+3. Enter the PIN. The device stays paired for 180 days.
+
+4. Optional: tap the Share button, then "Add to Home Screen". The tool then opens
+   from its own icon like an app. (The home-screen app asks for the PIN once more.)
+
+Files you choose on the iPhone are sent over your Wi-Fi to the device running the tool,
+processed there, and sent back. Nothing goes to the internet. The connection is not
+encrypted, so use phone access only on a network you trust, such as your home Wi-Fi.

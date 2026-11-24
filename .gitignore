@@ -1,0 +1,22 @@
+# Bundled release runtimes are generated/package artifacts and are too large for
+# the source repository. Build them locally when creating a release package.
+runtime/
+
+# Local Python and editor artifacts
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+build/
+dist/
+wheelhouse/
+
+# OS/editor files
+.DS_Store
+.vscode/
+.idea/
+
+# Local runtime data
+uploads/
+*.log

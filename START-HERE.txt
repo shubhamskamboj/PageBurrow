@@ -1,0 +1,43 @@
+PAGEBURROW: EVERY PDF TOOL, ON YOUR OWN COMPUTER
+================================================
+
+Edit, merge, split, compress, convert, sign, protect and OCR PDFs in your web browser.
+Everything happens on this computer: nothing is uploaded, there is no account, and no
+internet is needed. There is nothing to install: Python and the PDF engine are included.
+
+
+HOW TO START
+
+Windows 10 or 11
+  1. Right-click PageBurrow.zip, choose "Extract All", then open the extracted
+     PageBurrow folder. (Starting it from inside the zip does not work.)
+  2. Double-click  Start-Windows.cmd
+     If Windows warns about a file from the internet, choose "More info", then
+     "Run anyway".
+
+Mac (macOS 11 or later, Apple silicon or Intel)
+  1. Double-click PageBurrow.zip to unpack it, then open the PageBurrow folder.
+  2. Double-click  Start-macOS.command
+     The first time, macOS may block it:
+     - macOS 14 or older: right-click the file, choose Open, then Open.
+     - macOS 15 or newer: close the message, open System Settings >
+       Privacy & Security, and click "Open Anyway".
+
+Linux (x86-64 or ARM64)
+  1. Unpack PageBurrow.zip.
+  2. Double-click  start-linux.sh  (choose "Run in Terminal" if asked),
+     or run:  sh start-linux.sh
+
+
+PageBurrow then opens in your web browser at http://127.0.0.1:8765
+Keep its window (Command Prompt or Terminal) open while you work, and close it to
+stop PageBurrow. Download your PDFs before you stop it.
+
+
+PHONES AND TABLETS
+
+On the computer, start Start-Windows-Phone-Access.cmd (or the macOS or Linux
+"phone access" file) instead. Its window shows an address and a 6-digit PIN to open
+on a phone or tablet on the same Wi-Fi. See Start-iPhone-iPad.txt.
+
+More help, including Android: README.md

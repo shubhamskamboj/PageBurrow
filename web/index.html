@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#147552">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="PageBurrow">
+  <title>PageBurrow</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="icon" href="/icon-192.png">
+  <link rel="apple-touch-icon" href="/icon-180.png">
+  <link rel="stylesheet" href="/style.css">
+  <script src="/preview.js" defer></script>
+  <script src="/app.js" defer></script>
+  <script src="/tools.js" defer></script>
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#" aria-label="PageBurrow: all tools"><span class="brand-mark" aria-hidden="true">▤</span> <span class="brand-name">PageBurrow</span></a>
+    <span id="filename" class="filename" hidden></span>
+    <div class="top-actions">
+      <button id="home-button" class="ghost" hidden>All tools</button>
+      <button id="open" class="ghost">Edit a PDF</button>
+      <button id="compress-open" class="ghost" hidden>Compress</button>
+      <button id="export" class="primary" title="See the edited PDF, then download it" hidden>Preview &amp; download</button>
+    </div>
+  </header>
+  <input id="pdf-file" type="file" accept=".pdf,application/pdf" hidden>
+  <input id="image-file" type="file" accept="image/png,image/jpeg" hidden>
+  <main id="welcome" class="welcome">
+    <p id="phone-banner" class="phone-banner" role="status" hidden></p>
+    <section class="hero">
+      <h1>Every PDF tool, on your own device</h1>
+      <p>Edit, convert, organize, sign and protect PDFs. Your files are never uploaded to the internet, there are no limits, and it works offline.</p>
+      <label class="search"><span class="sr-only">Search tools</span><input id="tool-search" type="search" placeholder="Search tools, e.g. merge, Word, sign" autocomplete="off"></label>
+    </section>
+    <div id="tool-grid" class="tool-grid" aria-live="polite"></div>
+    <p id="welcome-error" class="error" role="alert" hidden></p>
+    <span class="offline">● Works offline · Files stay on your device</span>
+  </main>
+  <main id="tool-view" class="tool-view" hidden>
+    <div class="tool-page">
+      <div class="tool-head">
+        <span id="tool-icon" class="tool-icon" aria-hidden="true"></span>
+        <div><h1 id="tool-name"></h1><p id="tool-desc" class="muted"></p></div>
+      </div>
+      <div class="tool-body">
+        <section class="tool-main" aria-label="Files">
+          <div id="tool-drop" class="tool-drop">
+            <p><strong id="tool-drop-title">Choose files</strong><br><span class="muted">or drag them here</span></p>
+            <button id="tool-choose" class="primary" type="button">Choose files</button>
+            <button id="tool-camera" class="ghost" type="button" hidden>Take photos</button>
+            <small id="tool-accept" class="muted"></small>
+            <input id="tool-files" type="file" multiple hidden>
+            <input id="tool-capture" type="file" accept="image/*" capture="environment" hidden>
+          </div>
+          <ol id="tool-file-list" class="file-list"></ol>
+          <div id="tool-custom" class="tool-custom"></div>
+        </section>
+        <aside class="tool-side" aria-label="Options">
+          <form id="tool-form" novalidate>
+            <div id="tool-options" class="tool-options"></div>
+            <button id="tool-run" class="primary tool-run" type="submit">Run</button>
+          </form>
+          <p id="tool-working" class="working" role="status" hidden></p>
+          <section id="tool-result" class="tool-result" aria-live="polite" hidden></section>
+          <p id="tool-error" class="error" role="alert" hidden></p>
+        </aside>
+      </div>
+    </div>
+  </main>
+  <main id="work" class="work" hidden>
+    <nav id="tools" class="toolbar" aria-label="PDF tools">
+      <div class="tools">
+        <button data-tool="replace" aria-pressed="true">Edit text</button>
+        <button data-tool="text" aria-pressed="false">Add text</button>
+        <button data-tool="image" aria-pressed="false">Image</button>
+        <button data-tool="link" aria-pressed="false">Link</button>
+        <button data-tool="highlight" aria-pressed="false">Highlight</button>
+        <button data-tool="whiteout" aria-pressed="false">Eraser</button>
+        <button data-tool="rectangle" aria-pressed="false">Rectangle</button>
+        <button data-tool="ellipse" aria-pressed="false">Ellipse</button>
+        <button data-tool="line" aria-pressed="false">Line</button>
+        <button data-tool="draw" aria-pressed="false">Draw</button>
+      </div>
+      <div class="history">
+        <button id="undo" title="Undo (Ctrl+Z)" disabled><span aria-hidden="true">↶</span> Undo</button>
+        <button id="redo" title="Redo (Ctrl+Y)" disabled><span aria-hidden="true">↷</span> Redo</button>
+      </div>
+    </nav>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Pages">
+        <header><span>Pages</span><span id="page-count"></span></header>
+        <div id="thumbnails"></div>
+      </aside>
+      <section class="middle" aria-label="PDF preview">
+        <div class="stage" id="stage">
+          <div id="sheet" class="sheet" aria-label="Current PDF page">
+            <img id="page-image" alt="PDF page preview" draggable="false">
+            <svg id="live" aria-hidden="true" preserveAspectRatio="none"></svg>
+            <div id="overlay"></div>
+            <div id="region" hidden></div>
+          </div>
+        </div>
+        <footer class="navigation">
+          <button id="back" aria-label="Previous page">‹</button>
+          <label><span class="sr-only">Page number</span><input id="page-value" inputmode="numeric" type="number" min="1"></label>
+          <span id="page-of"></span>
+          <button id="next" aria-label="Next page">›</button>
+          <span class="divider"></span>
+          <button id="minus" aria-label="Zoom out">−</button>
+          <button id="fit" title="Fit page width">Fit width</button>
+          <button id="plus" aria-label="Zoom in">+</button>
+        </footer>
+      </section>
+      <aside class="panel" aria-label="Tool settings">
+        <h2 id="tool-title">Edit text</h2>
+        <p id="instruction" class="muted"></p>
+        <fieldset id="eraser-mode" class="modes" hidden>
+          <legend>When you drag over the page</legend>
+          <label class="check"><input type="radio" name="eraser-mode" value="erase" checked> <span><strong>Erase text, keep the background</strong><small>Removes only the ink. Paper color, shading and texture stay unchanged.</small></span></label>
+          <label class="check"><input type="radio" name="eraser-mode" value="match"> <span>Cover with the background color</span></label>
+          <label class="check"><input type="radio" name="eraser-mode" value="white"> <span>Cover with white</span></label>
+        </fieldset>
+        <div id="pen-options" class="pen-options" hidden>
+          <label>Pen color<input id="pen-color" type="color" value="#1a3a8f"></label>
+          <label>Pen width<input id="pen-width" type="range" min="1" max="12" step="0.5" value="2"></label>
+        </div>
+        <p id="document-warning" class="warning" hidden></p>
+        <p id="selection-warning" class="warning" hidden></p>
+        <div id="selection" class="selection" hidden>
+          <div id="sample" class="sample" hidden><span id="swatch"></span><div><strong id="font-name"></strong><small id="font-size"></small></div></div>
+          <form id="edit-form" novalidate>
+            <label id="text-field">Text<textarea id="value" rows="4" maxlength="350" spellcheck="false"></textarea></label>
+            <label id="url-field">Web address<input id="url" type="text" placeholder="https://example.com"></label>
+            <label id="font-field">Font<select id="font">
+              <option value="match">Match original</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Helvetica-Bold">Helvetica Bold</option>
+              <option value="Times-Roman">Times Roman</option>
+              <option value="Times-Bold">Times Bold</option>
+              <option value="Courier">Courier</option>
+            </select></label>
+            <div class="style-fields">
+              <label id="size-field">Size (pt)<input id="size" type="number" min="4" max="144" step="0.1" value="12"></label>
+              <label id="width-field" hidden>Width (%)<input id="stretch" type="number" min="25" max="400" step="1" value="100"></label>
+              <label id="color-field">Color<input id="color" type="color" value="#242b2a"></label>
+            </div>
+            <div id="fill-field" class="fill-field" hidden>
+              <label>Fill color<input id="fill" type="color" value="#ffffff"></label>
+              <button id="match-fill" class="ghost" type="button">Match background</button>
+              <button id="white-fill" class="ghost" type="button">White</button>
+            </div>
+            <label id="strength-field" class="strength" hidden>Erase strength
+              <input id="strength" type="range" min="1" max="5" step="1" value="3">
+              <span class="scale"><span>Gentle</span><span>Strong</span></span>
+              <small>Raise it if faint marks remain. Lower it if the background shading changes.</small>
+            </label>
+            <div id="nudge-field" class="nudge" role="group" aria-label="Move the selected item" hidden>
+              <span>Move</span>
+              <button type="button" data-nudge="-1,0" aria-label="Move left" title="Move left (←, Shift for 10 pt)">←</button>
+              <button type="button" data-nudge="0,-1" aria-label="Move up" title="Move up (↑)">↑</button>
+              <button type="button" data-nudge="0,1" aria-label="Move down" title="Move down (↓)">↓</button>
+              <button type="button" data-nudge="1,0" aria-label="Move right" title="Move right (→)">→</button>
+            </div>
+            <div class="form-actions">
+              <button id="apply" class="primary" type="submit">Apply</button>
+              <button id="cancel" class="ghost" type="button">Cancel</button>
+            </div>
+            <button id="text-here" class="outlined text-here" type="button" hidden>Add text on this area</button>
+            <button id="remove" class="link-button" type="button" hidden>Remove original text</button>
+            <button id="restore" class="link-button" type="button" hidden>Restore original</button>
+          </form>
+        </div>
+        <button id="pick-image" class="outlined" hidden>Choose image</button>
+        <div id="edit-status" class="status" role="status"></div>
+        <p id="error" class="error" role="alert" hidden></p>
+      </aside>
+    </div>
+  </main>
+  <dialog id="password-dialog">
+    <form method="dialog">
+      <h2>Unlock PDF</h2>
+      <p id="password-error" class="muted">Enter the password for this PDF.</p>
+      <label>Password<input id="password" type="password" autocomplete="off" autofocus></label>
+      <div class="form-actions"><button value="confirm" class="primary">Open PDF</button><button value="cancel" class="ghost">Cancel</button></div>
+    </form>
+  </dialog>
+  <dialog id="compress-dialog" class="compress-dialog" aria-labelledby="compress-heading">
+    <form id="compress-form" novalidate>
+      <h2 id="compress-heading">Compress PDF</h2>
+      <p id="compress-source" class="muted compress-source"></p>
+      <div class="compress-options">
+        <label>Maximum size (MB)<input id="compress-target" type="number" min="0.01" max="200" step="0.001" value="10" inputmode="decimal"></label>
+        <label>Page size<select id="compress-page">
+          <option value="a4">A4 · fit without cropping</option>
+          <option value="original">Original page size</option>
+        </select></label>
+      </div>
+      <fieldset class="modes">
+        <legend>Compression mode</legend>
+        <label class="check"><input type="radio" name="compress-mode" value="lossless" checked> <span><strong>Lossless</strong><small>Keeps image pixels unchanged. The result may exceed your size limit.</small></span></label>
+        <label class="check"><input type="radio" name="compress-mode" value="jpeg"> <span><strong>Allow JPEG compression</strong><small>Changes image pixels if needed while keeping their original resolution.</small></span></label>
+      </fieldset>
+      <section id="compress-result" class="compress-result" aria-live="polite" hidden>
+        <strong id="compress-title"></strong>
+        <p id="compress-summary"></p>
+        <p id="compress-note" class="muted"></p>
+      </section>
+      <div class="form-actions compress-actions">
+        <button id="compress-run" class="primary" type="submit">Compress</button>
+        <button id="compress-preview" class="ghost" type="button" hidden>Preview</button>
+        <a id="compress-download" class="primary button-link" hidden>Download PDF</a>
+        <button id="compress-close" class="ghost" type="button">Close</button>
+      </div>
+      <small class="muted">Files are processed on the device running PageBurrow.</small>
+    </form>
+  </dialog>
+  <dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-heading">
+    <h2 id="preview-heading">Check your PDF before downloading</h2>
+    <p id="preview-summary" class="muted"></p>
+    <div id="preview-body" class="preview-body"></div>
+    <div class="preview-actions">
+      <a id="preview-download" class="primary button-link">Download PDF</a>
+      <button id="preview-back" class="ghost" type="button">Back to editing</button>
+    </div>
+  </dialog>
+</body>
+</html>
