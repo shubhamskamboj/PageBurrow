@@ -1,5 +1,41 @@
 # PageBurrow
 
+## Online hosted preview
+
+[Deploy the online version on Render](https://render.com/deploy?repo=https://github.com/shubhamskamboj/PageBurrow)
+
+The repository includes a Docker-based web service configuration in `render.yaml`.
+Sign in to Render, open the deploy link, select the Free instance, and deploy.
+Render assigns an HTTPS address; that address opens the working PDF tool.
+The website is **not live until the deployment succeeds**. GitHub stores the source;
+the Python app runs on Render, not GitHub Pages.
+
+The hosted preview uploads documents to the server. It separates visitors using
+secure session cookies and temporary storage, supports 10 MB requests/uploads,
+and deletes sessions after 30 minutes of inactivity (cleanup waits for any running
+operation to finish). Restarting the service also removes all sessions. Download
+results before leaving. There are four visitor slots and 40 MB of stored input
+per session; generated output can temporarily exceed this amount. Requests run
+one at a time. Large or complex PDFs can exceed the instance's memory or processing
+time limits. This is a small demonstration service, not a high-traffic production
+deployment; use non-sensitive sample documents during evaluation.
+
+English/Hindi OCR and built-in Office converters are included. LibreOffice and a
+headless browser are not installed in this container. HTML-to-PDF and adding OCR
+languages are disabled online. Browser translation still depends on the visitor's
+browser. The original local version retains these features and its offline behavior.
+
+Free Render services sleep when idle and discard local files on restart. For
+details, see [Render's free service limitations](https://render.com/docs/free).
+Do not scale this preview across multiple instances: sessions are in memory.
+
+For another container host, provide `PUBLIC_ORIGIN=https://your-domain.example`
+and `PORT=10000`, with HTTPS terminated by the host's reverse proxy. On Render,
+the application automatically uses `RENDER_EXTERNAL_URL`. For a custom domain,
+set `PUBLIC_ORIGIN` to that domain's HTTPS URL.
+
+## Local version
+
 Every PDF tool in your browser, on your own device. Files are processed by a small program running on your computer (or Android phone). Nothing is uploaded to the internet, there is no account, and there are no file-count or size limits other than your device's memory.
 
 - **Edit a PDF**: change existing text in its original font, size and color. Add text you can drag, resize and stretch. Erase text from scans while keeping the paper's background. Add images, links, highlights, rectangles, ellipses, lines and freehand drawing.

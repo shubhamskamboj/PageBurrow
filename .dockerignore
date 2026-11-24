@@ -1,0 +1,15 @@
+*
+!Dockerfile
+!requirements.txt
+!app.py
+!compressor.py
+!editor.py
+!online.py
+!COPYING
+!pdftools/
+!pdftools/**
+!web/
+!web/**
+!tessdata/
+!tessdata/**
+**/__pycache__
