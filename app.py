@@ -252,15 +252,20 @@ def compress_options(query):
 
 class Request(BaseHTTPRequestHandler):
     timeout = 10
+    content_security_policy = (
+        "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; "
+        "frame-ancestors 'none'; object-src 'none'; base-uri 'none'"
+    )
 
     def send(self, data, content_type, code=200, headers=(), referrer="no-referrer"):
         self.send_response(code)
         self.send_header("Content-Type", content_type)
         self.send_header("Content-Length", str(len(data)))
-        self.send_header("Cache-Control", "no-store")
+        if not any(name.lower() == "cache-control" for name, _ in headers):
+            self.send_header("Cache-Control", "no-store")
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("Referrer-Policy", referrer)
-        self.send_header("Content-Security-Policy", "default-src 'self'; img-src 'self' blob: data:; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; object-src 'none'; base-uri 'none'")
+        self.send_header("Content-Security-Policy", self.content_security_policy)
         for name, value in headers:
             self.send_header(name, value)
         self.end_headers()

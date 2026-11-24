@@ -314,3 +314,22 @@ dialog .check{display:flex;font-size:14px;font-weight:400;margin:0 0 10px}
 @media(max-width:600px){.preview-dialog{width:100%;max-width:100%;max-height:100dvh;height:100dvh;margin:0;border-radius:0;padding:12px}.preview-body .rp-stage{max-height:max(220px,calc(100dvh - 370px))}.preview-body{flex:1}.rp-stage{padding:8px}.rp{padding:10px}.rp-nav{gap:3px}.rp-nav .divider{display:none}.rp-nav button{padding:5px 9px}}
 @media(max-width:470px){.compress-options{grid-template-columns:1fr}.tool-cards{grid-template-columns:1fr}.tool-view{padding:14px 12px 30px}.welcome{padding-top:22px}}
 @media(max-width:670px){.top:has(#export:not([hidden])) .brand-name,.top:has(#export:not([hidden])) #open,.top:has(#home-button:not([hidden])) .brand-name{display:none}.top{padding:0 10px;gap:8px;height:57px}.brand{font-size:14px}.top-actions{gap:4px}.top-actions button{padding:7px;font-size:12px}.filename{display:none}.work{height:calc(100dvh - 57px)}.toolbar{padding:5px 8px}.layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr) auto}.sidebar{display:none}.panel{max-height:38dvh;border-left:0;border-top:1px solid var(--line);padding:10px 13px}.panel h2{font-size:16px}.stage{padding:9px}}
+
+.large-pdf-entry{display:table;margin:0 auto 18px;color:var(--accent-dark);font-weight:700;text-underline-offset:4px}
+.large-pdf{width:min(100%,760px);padding:clamp(16px,4vw,26px);background:var(--panel);border:1px solid var(--line);border-radius:16px;scroll-margin-top:20px}
+.large-pdf h2{margin:0 0 6px;font-size:clamp(20px,4vw,25px)}
+.large-pdf p{margin:0 0 16px;color:var(--muted)}
+.large-pdf .tool-options .field,.large-pdf-files{font-size:15px}
+.large-pdf-files{display:grid;gap:6px;font-weight:650}
+.large-pdf-files input{max-width:100%;font-weight:400}
+#large-pdf-selected{padding-left:22px;overflow-wrap:anywhere}
+#large-pdf-selected:empty,#large-pdf-status:empty{display:none}
+#large-pdf-selected li{margin:6px 0}
+.large-pdf-file-actions{display:inline-flex;gap:5px;margin-left:8px}
+.large-pdf-file-actions button{padding:3px 8px;font-size:14px}
+.large-pdf-actions,#large-pdf-downloads{display:flex;flex-wrap:wrap;gap:8px}
+#large-pdf-status{margin:14px 0 8px}
+#large-pdf-status.error{color:#922c23}
+.large-pdf-download{display:inline-block;border-radius:8px;text-decoration:none;overflow-wrap:anywhere}
+.large-pdf fieldset{border:0;margin:0;padding:0;min-width:0}
+#large-pdf-cancel{margin-top:8px}

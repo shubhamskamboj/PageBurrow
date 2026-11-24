@@ -13,3 +13,6 @@
 !tessdata/
 !tessdata/**
 **/__pycache__
+!scripts/
+!scripts/install_mupdf_js.py
+web/vendor/

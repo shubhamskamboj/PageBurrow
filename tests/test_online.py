@@ -43,7 +43,7 @@ class HostedTests(unittest.TestCase):
     def session(self):
         code, headers, body = self.request()
         self.assertEqual(code, 200)
-        self.assertIn(b"Files are uploaded to this server", body)
+        self.assertIn(b"10 MB", body)
         self.assertNotIn(b"Your files are never uploaded", body)
         self.assertIn("Secure; HttpOnly; SameSite=Strict", headers["Set-Cookie"])
         return headers["Set-Cookie"].split(";")[0]
@@ -55,6 +55,16 @@ class HostedTests(unittest.TestCase):
             {"Origin": "https://evil.example"})[0], 403)
         self.assertEqual(self.request("/api/status", b"", cookie,
             {"Origin": self.server.public_origin})[0], 200)
+
+    def test_large_pdf_worker_is_public_without_creating_a_session(self):
+        code, headers, body = self.request("/large-pdf-worker.js")
+        self.assertEqual(code, 200)
+        self.assertIn("text/javascript", headers["Content-Type"])
+        self.assertIn("'wasm-unsafe-eval'", headers["Content-Security-Policy"])
+        self.assertNotIn("Set-Cookie", headers)
+        self.assertIn(b"FileReaderSync", body)
+        self.assertFalse(online.SESSIONS)
+        self.assertNotIn("'wasm-unsafe-eval'", self.request()[1]["Content-Security-Policy"])
 
     def test_shared_link_opens_in_a_top_level_tab(self):
         cross_site = {"Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "navigate"}

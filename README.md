@@ -10,7 +10,15 @@ Render assigns an HTTPS address; that address opens the working PDF tool.
 The website is **not live until the deployment succeeds**. GitHub stores the source;
 the Python app runs on Render, not GitHub Pages.
 
-The hosted preview uploads documents to the server. It separates visitors using
+On the homepage, open **Large PDF Tools** to compress, merge, split, extract,
+remove, or rotate pages in PDFs of up to **200 MB total per operation**. These
+tools run in a WebAssembly worker in the visitor's browser and never upload the
+PDF. Lossless compression can leave an already optimized PDF at its original
+size. Complex documents may require more memory than a phone or tablet has
+available. The browser engine is [MuPDF.js](https://github.com/ArtifexSoftware/mupdf.js),
+distributed under the AGPL.
+
+The standard hosted tools upload documents to the server. It separates visitors using
 secure session cookies and temporary storage, supports 10 MB requests/uploads,
 and deletes sessions after 30 minutes of inactivity (cleanup waits for any running
 operation to finish). Restarting the service also removes all sessions. Download

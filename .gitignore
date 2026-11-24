@@ -25,3 +25,6 @@ uploads/
 .env
 .env.*
 !.env.example
+
+# Browser PDF engine installed by the container build
+/web/vendor/

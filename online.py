@@ -19,6 +19,15 @@ SESSION_BYTES = 40 * 1024 * 1024
 TTL = 30 * 60
 COOKIE = "__Host-pageburrow"
 SOURCE = "https://github.com/shubhamskamboj/PageBurrow"
+MUPDF_PATH = "vendor/mupdf-1.28.6"
+BROWSER_ASSETS = {
+    "/large-pdf.js": ("large-pdf.js", "text/javascript; charset=utf-8"),
+    "/large-pdf-worker.js": ("large-pdf-worker.js", "text/javascript; charset=utf-8"),
+    f"/{MUPDF_PATH}/mupdf.js": (f"{MUPDF_PATH}/mupdf.js", "text/javascript; charset=utf-8"),
+    f"/{MUPDF_PATH}/mupdf-wasm.js": (f"{MUPDF_PATH}/mupdf-wasm.js", "text/javascript; charset=utf-8"),
+    f"/{MUPDF_PATH}/mupdf-wasm.wasm": (f"{MUPDF_PATH}/mupdf-wasm.wasm", "application/wasm"),
+    f"/{MUPDF_PATH}/LICENSE": (f"{MUPDF_PATH}/LICENSE", "text/plain; charset=utf-8"),
+}
 SESSIONS = {}
 app.MAX_UPLOAD = LIMIT
 app.MAX_PDF = LIMIT
@@ -50,9 +59,16 @@ class OnlineRequest(app.Request):
         if content_type.startswith("text/html") and code == 200:
             text = data.decode()
             text = text.replace("Every PDF tool, on your own device", "Your PDF toolbox, online")
+            has_browser_engine = (app.ROOT / "web" / MUPDF_PATH / "mupdf-wasm.wasm").is_file()
+            description = (
+                "Large PDF Tools process up to 200 MB in your browser. "
+                "Standard tools upload up to 10 MB per file to this server for processing."
+                if has_browser_engine else
+                "Files are uploaded to this server for processing. Up to 10 MB per upload."
+            )
             text = text.replace(
                 "Edit, convert, organize, sign and protect PDFs. Your files are never uploaded to the internet, there are no limits, and it works offline.",
-                "Edit, convert, organize, sign and protect PDFs in your browser. Files are uploaded to this server for processing. Up to 10 MB per upload.")
+                f"Edit, convert, organize, sign and protect PDFs in your browser. {description}")
             text = text.replace("● Works offline · Files stay on your device",
                 'Online preview · Files expire after 30 minutes of session inactivity. '
                 'Download results before leaving. '
@@ -61,6 +77,8 @@ class OnlineRequest(app.Request):
                 '<p class="muted">HTML-to-PDF and extra OCR language downloads are unavailable in this hosted preview. '
                 'English and Hindi OCR are included. Translation requires a supported browser. '
                 'This shared preview is intended for small, non-sensitive documents.</p><div id="tool-grid"')
+            if has_browser_engine:
+                text = text.replace("</head>", '  <script src="/large-pdf.js" defer></script>\n</head>')
             data = text.encode()
         if getattr(self, "new_cookie", None):
             headers = tuple(headers) + (("Set-Cookie", f"{COOKIE}={self.new_cookie}; Path=/; Secure; HttpOnly; SameSite=Strict; Max-Age={TTL}"),)
@@ -91,6 +109,9 @@ class OnlineRequest(app.Request):
             return
         if post and self.headers.get("X-Local-Editor") != "1":
             self.json({"error": "Open PageBurrow in its own browser tab."}, 403)
+            return
+        if not post and path in BROWSER_ASSETS:
+            self.browser_asset(path)
             return
         # Reject oversized/chunked input before the original handler reads it.
         if post:
@@ -146,6 +167,27 @@ class OnlineRequest(app.Request):
             super().dispatch(post)
         finally:
             app.FILES, app.UPLOADS, app.ORIGINALS, app.UPLOAD_DIR = previous
+
+    def browser_asset(self, path):
+        filename, mime = BROWSER_ASSETS[path]
+        asset = app.ROOT / "web" / filename
+        if not asset.is_file():
+            self.json({"error": "PDF engine asset unavailable."}, 404)
+            return
+        if path == "/large-pdf-worker.js":
+            self.content_security_policy = (
+                "default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; connect-src 'self'"
+            )
+        headers = []
+        if filename.startswith(MUPDF_PATH):
+            headers.append(("Cache-Control", "public, max-age=31536000, immutable"))
+            headers.append(("Vary", "Accept-Encoding"))
+            encodings = self.headers.get("Accept-Encoding", "").split(",")
+            compressed = asset.with_name(asset.name + ".br")
+            if "br" in [encoding.strip() for encoding in encodings] and compressed.is_file():
+                headers.append(("Content-Encoding", "br"))
+                asset = compressed
+        self.send(asset.read_bytes(), mime, headers=headers)
 
     def tool_request(self, path, payload):
         if path == "/api/ocr-language" or (path == "/api/tool" and payload.get("tool") == "html_to_pdf"):
