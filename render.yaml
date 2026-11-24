@@ -6,4 +6,4 @@ services:
     healthCheckPath: /healthz
     envVars:
       - key: PORT
-        value: 10000
+        value: "10000"
