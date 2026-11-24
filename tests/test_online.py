@@ -56,6 +56,14 @@ class HostedTests(unittest.TestCase):
         self.assertEqual(self.request("/api/status", b"", cookie,
             {"Origin": self.server.public_origin})[0], 200)
 
+    def test_shared_link_opens_in_a_top_level_tab(self):
+        cross_site = {"Sec-Fetch-Site": "cross-site", "Sec-Fetch-Mode": "navigate"}
+        code, headers, _ = self.request(extra={**cross_site, "Sec-Fetch-Dest": "document"})
+        self.assertEqual(code, 200)
+        cookie = headers["Set-Cookie"].split(";")[0]
+        self.assertEqual(self.request(extra={**cross_site, "Sec-Fetch-Dest": "iframe"})[0], 403)
+        self.assertEqual(self.request("/api/status", b"", cookie, cross_site)[0], 403)
+
     def test_visitor_isolation_and_processing(self):
         first, second = self.session(), self.session()
         with online.app.pdf.open() as doc:

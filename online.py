@@ -80,7 +80,13 @@ class OnlineRequest(app.Request):
         if origin is not None and origin != self.server.public_origin:
             self.json({"error": "Open PageBurrow in its own browser tab."}, 403)
             return
-        if self.headers.get("Sec-Fetch-Site") == "cross-site":
+        # A shared link must open the home page in a top-level browser tab.
+        landing_navigation = (
+            not post and path == "/"
+            and self.headers.get("Sec-Fetch-Mode") == "navigate"
+            and self.headers.get("Sec-Fetch-Dest") == "document"
+        )
+        if self.headers.get("Sec-Fetch-Site") == "cross-site" and not landing_navigation:
             self.json({"error": "Cross-site requests are not supported."}, 403)
             return
         if post and self.headers.get("X-Local-Editor") != "1":
