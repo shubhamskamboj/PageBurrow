@@ -78,6 +78,8 @@ class OnlineRequest(app.Request):
                 'English and Hindi OCR are included. Translation requires a supported browser. '
                 'This shared preview is intended for small, non-sensitive documents.</p><div id="tool-grid"')
             if has_browser_engine:
+                text = text.replace("<!-- hosted-large-pdf-panel -->", (app.ROOT / "web" / "large-pdf-panel.html").read_text())
+                text = text.replace("<!-- hosted-large-pdf-link -->", '<a class="large-pdf-entry" id="large-pdf-entry" href="#large-pdf" hidden>Open Large PDF Tools · Up to 200 MB</a>')
                 text = text.replace("</head>", '  <script src="/large-pdf.js" defer></script>\n</head>')
             data = text.encode()
         if getattr(self, "new_cookie", None):

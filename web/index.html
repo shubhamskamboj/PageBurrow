@@ -34,51 +34,10 @@
     <section class="hero">
       <h1>Every PDF tool, on your own device</h1>
       <p>Edit, convert, organize, sign and protect PDFs. Your files are never uploaded to the internet, there are no limits, and it works offline.</p>
-      <a class="large-pdf-entry" id="large-pdf-entry" href="#large-pdf" hidden>Open Large PDF Tools · Up to 200 MB</a>
+      <!-- hosted-large-pdf-link -->
       <label class="search"><span class="sr-only">Search tools</span><input id="tool-search" type="search" placeholder="Search tools, e.g. merge, Word, sign" autocomplete="off"></label>
     </section>
-    <section id="large-pdf" class="large-pdf" aria-labelledby="large-pdf-title" hidden>
-      <h2 id="large-pdf-title">Large PDF Tools</h2>
-      <p>Free for PDFs up to 200 MB total. Files are processed in this browser and stay on your device.</p>
-      <form>
-        <fieldset>
-          <div class="tool-options">
-            <label class="field">Operation
-              <select name="operation">
-                <option value="compress">Compress PDF (lossless)</option>
-                <option value="merge">Merge PDFs</option>
-                <option value="split">Split PDF</option>
-                <option value="extract">Extract pages</option>
-                <option value="remove">Remove pages</option>
-                <option value="rotate">Rotate pages</option>
-              </select>
-            </label>
-            <label class="field" hidden>Page numbers or ranges
-              <input name="ranges" type="text" placeholder="1-3, 6, 9-12" maxlength="2000">
-              <small id="large-pdf-range-help"></small>
-            </label>
-            <label class="field" hidden>Rotation
-              <select name="angle">
-                <option value="90">90° clockwise</option>
-                <option value="180">180°</option>
-                <option value="270">90° counterclockwise</option>
-              </select>
-            </label>
-          </div>
-          <label class="large-pdf-files">Choose PDF files
-            <input name="files" type="file" accept=".pdf,application/pdf">
-          </label>
-          <p id="large-pdf-merge-help" class="muted" hidden>Files will merge in the order shown. Use the move buttons to change the order. Links, annotations, interactive forms, and bookmarks may be omitted.</p>
-          <ol id="large-pdf-selected" aria-label="Selected PDFs"></ol>
-          <div class="large-pdf-actions">
-            <button id="large-pdf-submit" class="primary" type="submit">Process PDF</button>
-          </div>
-        </fieldset>
-        <button id="large-pdf-cancel" class="ghost" type="button" hidden>Cancel</button>
-      </form>
-      <p id="large-pdf-status" role="status"></p>
-      <div id="large-pdf-downloads"></div>
-    </section>
+    <!-- hosted-large-pdf-panel -->
     <div id="tool-grid" class="tool-grid" aria-live="polite"></div>
     <p id="welcome-error" class="error" role="alert" hidden></p>
     <span class="offline">● Works offline · Files stay on your device</span>
