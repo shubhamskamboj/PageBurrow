@@ -151,7 +151,7 @@ function processDocument({ files, operation, pageRanges, angle }, engine) {
 
 self.onmessage = async ({ data }) => {
   try {
-    const engine = await import("/vendor/mupdf-1.28.6/mupdf.js");
+    const engine = await import("./vendor/mupdf-1.28.6/mupdf.js");
     self.postMessage({ results: processDocument(data, engine) });
   } catch (error) {
     self.postMessage({ error: error instanceof Error ? error.message : "This PDF could not be processed." });

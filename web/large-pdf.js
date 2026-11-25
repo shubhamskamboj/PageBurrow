@@ -118,7 +118,7 @@
     }
     status.textContent = "Loading the PDF engine and processing your files. Large PDFs may take a minute.";
     try {
-      worker = new Worker("/large-pdf-worker.js", { type: "module" });
+      worker = new Worker("./large-pdf-worker.js", { type: "module" });
     } catch {
       showError("This browser could not start the PDF engine.");
       return;
@@ -157,5 +157,6 @@
   });
   updateOptions();
   panel.hidden = false;
-  document.querySelector("#large-pdf-entry").hidden = false;
+  const entry = document.querySelector("#large-pdf-entry");
+  if (entry) entry.hidden = false;
 })();
