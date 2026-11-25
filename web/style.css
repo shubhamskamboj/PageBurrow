@@ -333,3 +333,5 @@ dialog .check{display:flex;font-size:14px;font-weight:400;margin:0 0 10px}
 .large-pdf-download{display:inline-block;border-radius:8px;text-decoration:none;overflow-wrap:anywhere}
 .large-pdf fieldset{border:0;margin:0;padding:0;min-width:0}
 #large-pdf-cancel{margin-top:8px}
+
+.engine-status{position:sticky;top:0;z-index:8;margin:0;padding:8px 16px;background:var(--accent-light);color:var(--accent-dark);text-align:center}

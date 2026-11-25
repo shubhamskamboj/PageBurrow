@@ -22,13 +22,23 @@
   const formatSize = bytes => bytes >= 1e6 ? (bytes / 1e6).toFixed(bytes >= 1e7 ? 0 : 1) + " MB" : Math.max(1, Math.round(bytes / 1e3)) + " KB";
 
   async function post(path, data) {
-    const response = await fetch(path, { method: "POST", headers: { ...HEAD, "Content-Type": "application/json" }, body: JSON.stringify(data ?? {}), cache: "no-store" });
+    const response = await (window.pageBurrowRequest || fetch)(path, { method: "POST", headers: { ...HEAD, "Content-Type": "application/json" }, body: JSON.stringify(data ?? {}), cache: "no-store" });
     const json = response.headers.get("Content-Type")?.includes("application/json");
     if (!response.ok) throw new Error(json ? (await response.json()).error : "PageBurrow is not reachable. Check that it is still running.");
     return json ? response.json() : response.blob();
   }
 
   function upload(file, onProgress) {
+    if (window.pageBurrowRequest) {
+      return window.pageBurrowRequest("/api/upload", {
+        headers: { "X-File-Name": encodeURIComponent(file.name || "file") }, body: file,
+      }).then(async response => {
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        onProgress?.(1);
+        return result;
+      });
+    }
     return new Promise((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open("POST", "/api/upload");
@@ -203,7 +213,15 @@
     working: $("tool-working"), result: $("tool-result"), error: $("tool-error"), home: $("home-button"),
     main: document.querySelector(".tool-main")
   };
-  post("/api/tools-info").then(info => { st.info = info; if (st.tool) renderOptions(); }).catch(() => {});
+  let infoRequest;
+  function loadToolsInfo() {
+    if (st.info || infoRequest) return;
+    infoRequest = post("/api/tools-info").then(info => {
+      st.info = info;
+      if (st.tool) renderOptions();
+    }).catch(err => { if (st.tool) error(err.message); }).finally(() => { infoRequest = null; });
+  }
+  if (!window.pageBurrowRequest) loadToolsInfo();
 
   function error(message = "") {
     view.error.textContent = message;
@@ -299,6 +317,7 @@
   function openTool(tool) {
     closeTool();
     st.tool = tool;
+    loadToolsInfo();
     view.welcome.hidden = view.work.hidden = true;
     view.toolView.hidden = false;
     view.home.hidden = false;
@@ -563,7 +582,7 @@
   }
 
   async function runTool(tool, ids, options) {
-    const response = await fetch("/api/tool", { method: "POST", headers: { ...HEAD, "Content-Type": "application/json" },
+    const response = await (window.pageBurrowRequest || fetch)("/api/tool", { method: "POST", headers: { ...HEAD, "Content-Type": "application/json" },
       body: JSON.stringify({ tool, files: ids, options }), cache: "no-store" });
     const json = response.headers.get("Content-Type")?.includes("application/json");
     if (!response.ok) throw new Error(json ? (await response.json()).error : "The tool could not finish.");

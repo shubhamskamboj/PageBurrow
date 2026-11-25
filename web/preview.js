@@ -13,7 +13,7 @@
   async function call(path, data) {
     let response;
     try {
-      response = await fetch(path, { method: "POST", headers: HEAD, body: JSON.stringify(data), cache: "no-store" });
+      response = await (window.pageBurrowRequest || fetch)(path, { method: "POST", headers: HEAD, body: JSON.stringify(data), cache: "no-store" });
     } catch {
       throw new Error("PageBurrow is not reachable. Check that it is still running.");
     }

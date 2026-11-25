@@ -55,7 +55,7 @@ async function api(path, { data, raw, password, token = state.token } = {}) {
   const headers = { "X-Local-Editor": "1", "X-Document": token };
   if (password) headers["X-PDF-Password"] = encodeURIComponent(password);
   if (!raw) headers["Content-Type"] = "application/json";
-  const response = await fetch("/api/" + path, {
+  const response = await (window.pageBurrowRequest || fetch)("/api/" + path, {
     method: "POST", headers, body: raw || JSON.stringify(data ?? {}),
     cache: "no-store"
   });
@@ -1661,7 +1661,7 @@ const plural = (count, word) => `${count} ${word}${count === 1 ? "" : "s"}`;
 function forgetUploads(ids) {
   ids = ids.filter(Boolean);
   if (ids.length) {
-    fetch("/api/forget", { method: "POST", headers: { "X-Local-Editor": "1", "Content-Type": "application/json" }, body: JSON.stringify({ ids }) }).catch(() => {});
+    (window.pageBurrowRequest || fetch)("/api/forget", { method: "POST", headers: { "X-Local-Editor": "1", "Content-Type": "application/json" }, body: JSON.stringify({ ids }) }).catch(() => {});
   }
 }
 
@@ -1702,7 +1702,7 @@ ui["preview-download"].addEventListener("click", () => {
 ui.export.onclick = async () => {
   if (!(await finishLive())) return;
   busy(async () => {
-    const response = await fetch("/api/export", {
+    const response = await (window.pageBurrowRequest || fetch)("/api/export", {
       method: "POST", cache: "no-store", body: JSON.stringify({ edits: state.edits }),
       headers: { "X-Local-Editor": "1", "X-Document": state.token, "X-Preview": "1", "Content-Type": "application/json" }
     });
@@ -1802,7 +1802,7 @@ async function runCompress() {
   ui["compress-run"].textContent = "Compressing…";
   compressResult("pending", "Compressing PDF", "Large scans can take a minute or more.");
   try {
-    const response = await fetch("/api/compress?" + query, { method: "POST", headers, body, cache: "no-store" });
+    const response = await (window.pageBurrowRequest || fetch)("/api/compress?" + query, { method: "POST", headers, body, cache: "no-store" });
     if (!response.ok) {
       const details = response.headers.get("Content-Type")?.includes("application/json") ? await response.json() : {};
       compressResult("error", "Could not compress the PDF", details.error || "The PDF could not be compressed.");
@@ -1873,7 +1873,7 @@ ui["compress-dialog"].oncancel = event => {
 };
 
 // Phone and tablet access (started with the "phone access" launcher).
-fetch("/api/status", { method: "POST", headers: { "X-Local-Editor": "1" }, cache: "no-store" })
+(window.pageBurrowRequest || fetch)("/api/status", { method: "POST", headers: { "X-Local-Editor": "1" }, cache: "no-store" })
   .then(response => response.ok ? response.json() : null)
   .then(status => {
     if (!status?.lan) return;

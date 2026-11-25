@@ -1,6 +1,6 @@
 # PageBurrow
 
-[Open PageBurrow on GitHub Pages](https://shubhamskamboj.github.io/PageBurrow/) for free browser-based PDF tools up to 200 MB. The page also links to the Python-backed editor, OCR, and conversion tools on Render.
+[Open PageBurrow on GitHub Pages](https://shubhamskamboj.github.io/PageBurrow/) for free browser-based PDF tools up to 200 MB. The editor, OCR, conversions, and other standard tools run in a browser worker using a Python runtime hosted on the same GitHub Pages site.
 
 ## Online hosted preview
 

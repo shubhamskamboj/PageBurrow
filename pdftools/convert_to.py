@@ -4,6 +4,7 @@ from pathlib import Path
 import re
 import shutil
 import subprocess
+import sys
 import tempfile
 import urllib.request
 
@@ -150,7 +151,13 @@ def html_to_pdf(files, opt):
             data = browser.print_to_pdf(executable, url=address, html=html, paper=paper, landscape=landscape,
                                         margin=margin, background=background)
         else:
-            if address:
+            if address and sys.platform == "emscripten":
+                from pyodide.http import open_url
+                try:
+                    html = open_url(address).read()
+                except Exception:
+                    raise ToolError("Your browser could not read this website. Save the page as HTML and select that file instead.") from None
+            elif address:
                 try:
                     request = urllib.request.Request(address, headers={"User-Agent": "Mozilla/5.0 (PageBurrow)"})
                     html = urllib.request.urlopen(request, timeout=30).read().decode("utf-8", "replace")
